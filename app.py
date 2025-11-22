@@ -7,6 +7,10 @@ CORS(app)
 
 GEMINI_API_KEY = "AIzaSyDIJyYtqwajZAcxywUQWZGrIFEK3PLFsW4"
 
+@app.route("/")
+def home():
+    return "Backend is working!"
+
 @app.route("/gemini", methods=["POST"])
 def gemini():
     data = request.get_json()
@@ -15,43 +19,27 @@ def gemini():
     url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
     body = {
-    "contents": [
-        {
-            "role": "user",
-            "parts": [{
-                "text": f"""
-You are an educational assistant. Follow these rules STRICTLY:
-
-1. ALWAYS give a short answer of 2–3 lines ONLY.
-2. ONLY give long/detail answers if the user says:
-   - "explain in detail"
-   - "give long answer"
-   - "full explanation"
-   - "elaborate"
-   - "describe fully"
-   - "long explanation"
-
-User question: {user_text}
-"""
-            }]
-        }
-    ]
-}
+        "contents": [
+            {
+                "role": "user",
+                "parts": [ {"text": user_text} ]
+            }
+        ]
+    }
 
     response = requests.post(url, json=body)
     result = response.json()
 
-    print("\nRAW GEMINI RESPONSE:", result)  # <-- debugging
+    print("RAW GEMINI RESPONSE:", result)
 
-    answer = (
-        result.get("candidates", [{}])[0]
-             .get("content", {})
-             .get("parts", [{}])[0]
-             .get("text", "Gemini did not return text.")
-    )
+    # ---- SAFE TEXT EXTRACTION ----
+    try:
+        answer = result["candidates"][0]["content"]["parts"][0]["text"]
+    except:
+        answer = "Gemini did not return a valid message."
 
     return jsonify({"answer": answer})
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
