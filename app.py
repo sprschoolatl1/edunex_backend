@@ -1,46 +1,65 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-GEMINI_API_KEY = "AIzaSyDIJyYtqwajZAcxywUQWZGrIFEK3PLFsW4"
+# Load API key safely from Render Environment Variable
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 @app.route("/")
 def home():
-    return "Backend is working!"
+    return "Backend is running successfully!"
 
 @app.route("/gemini", methods=["POST"])
 def gemini():
-    data = request.get_json()
-    user_text = data.get("query", "")
+    try:
+        data = request.get_json()
+        user_text = data.get("query", "")
 
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        url = (
+            "https://generativelanguage.googleapis.com/v1/models/"
+            "gemini-2.0-flash:generateContent?key=" + GEMINI_API_KEY
+        )
 
-    body = {
-        "contents": [
-            {
-                "role": "user",
-                "parts": [ {"text": user_text} ]
-            }
-        ]
-    }
+        body = {
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [
+                        {
+                            "text": f"""
+You are an educational assistant. Follow these rules:
 
-    response = requests.post(url, json=body)
-    result = response.json()
+1. Keep answers short (2–3 lines).
+2. Only give long answers when asked: 'explain in detail', 'elaborate', 'long answer'.
 
-    print("RAW GEMINI RESPONSE:", result)
+User question: {user_text}
+"""
+                        }
+                    ]
+                }
+            ]
+        }
 
-    # ---- SAFE TEXT EXTRACTION ----
-   try:
-    answer = result["candidates"][0]["content"]["parts"][0]["text"]
-except:
-    answer = "Gemini did not return a valid message."
+        r = requests.post(url, json=body)
+        result = r.json()
+        print("RAW:", result)
 
-    return jsonify({"answer": answer})
+        answer = (
+            result.get("candidates", [{}])[0]
+            .get("content", {})
+            .get("parts", [{}])[0]
+            .get("text", "Gemini did not return text.")
+        )
+
+        return jsonify({"answer": answer})
+
+    except Exception as e:
+        return jsonify({"answer": f"Backend error: {str(e)}"})
 
 
 if __name__ == "__main__":
     app.run()
-
