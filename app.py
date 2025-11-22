@@ -33,13 +33,14 @@ def gemini():
     print("RAW GEMINI RESPONSE:", result)
 
     # ---- SAFE TEXT EXTRACTION ----
-    try:
-        answer = result["candidates"][0]["content"]["parts"][0]["text"]
-    except:
-        answer = "Gemini did not return a valid message."
+   try:
+    answer = result["candidates"][0]["content"]["parts"][0]["text"]
+except:
+    answer = "Gemini did not return a valid message."
 
     return jsonify({"answer": answer})
 
 
 if __name__ == "__main__":
     app.run()
+
