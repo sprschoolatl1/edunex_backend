@@ -1,0 +1,39 @@
+# --- Core backend ---
+fastapi==0.110.0
+uvicorn==0.29.0
+Flask==3.0.3
+flask-cors==6.0.0
+python-dotenv==1.0.1
+
+# --- LLM inference (TinyLLaMA via llama.cpp) ---
+llama-cpp-python==0.2.79   # for running GGUF models locally
+
+# --- Embeddings & Vector Store ---
+chromadb==0.5.5
+langchain==0.2.9
+langchain-core==0.2.43
+langchain-text-splitters==0.2.4
+sentence-transformers==3.1.1
+
+# --- Utilities ---
+tqdm==4.67.1
+requests==2.32.3
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.5.2
+
+# --- Optional: Monitoring & JSON Handling ---
+orjson==3.10.10
+pydantic==2.8.2
+
+# --- Local Model Management ---
+huggingface-hub==0.24.6
+transformers==4.44.0
+fastapi==0.121.1
+uvicorn==0.22.0
+llama-cpp-python==0.1.78
+chromadb==0.5.5
+sentence-transformers==3.1.1
+numpy==1.26.4
+pydantic==2.12.4
+python-dotenv==1.2.1
