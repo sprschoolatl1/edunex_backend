@@ -21,9 +21,10 @@ def gemini_chat():
         return jsonify({"answer": "API key not configured."}), 500
 
     url = (
-        "https://generativelanguage.googleapis.com/v1/models/"
-        "gemini-1.5-flash:generateContent?key=" + API_KEY
-    )
+    "https://generativelanguage.googleapis.com/v1/models/"
+    "gemini-1.5-flash:generateContent?key=" + API_KEY
+)
+
 
     payload = {
         "contents": [
@@ -59,3 +60,4 @@ def gemini_chat():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
