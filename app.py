@@ -24,27 +24,23 @@ def gemini_chat():
         return jsonify({"answer": "API key not configured."}), 500
 
     url = (
-        "https://generativelanguage.googleapis.com/"
-        "v1beta/models/gemini-1.5-flash:generateContent"
-        f"?key={API_KEY}"
-    )
+    "https://generativelanguage.googleapis.com/"
+    "v1beta/models/gemini-1.5-flash-latest:generateContent"
+    f"?key={API_KEY}"
+)
 
-    payload = {
-        "contents": [
-            {
-                "parts": [
-                    {
-                        "text": (
-                            "INSTRUCTION: Always give short answers (2–3 lines). "
-                            "Give long explanations ONLY if the user says "
-                            "'explain in detail', 'long answer', or 'full explanation'.\n\n"
-                            f"USER QUESTION: {user_msg}"
-                        )
-                    }
-                ]
-            }
-        ]
-    }
+payload = {
+    "contents": [
+        {
+            "parts": [
+                {
+                    "text": user_msg
+                }
+            ]
+        }
+    ]
+}
+
 
     try:
         r = requests.post(url, json=payload, timeout=20)
@@ -60,3 +56,4 @@ def gemini_chat():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
